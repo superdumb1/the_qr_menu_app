@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ============================================================
+   THEME TOKENS → Tailwind mapping
+   ============================================================ */
+@theme {
+  /* Surface Colors */
+  --color-bg: var(--bg-primary);
+  --color-shaded: var(--bg-shaded);
+  --color-card: var(--card);
+  --color-surface: var(--bg-surface);
+  --color-alt: var(--bg-alt);
+  
+  /* Text & Inversion */
+  --color-text: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-bg-invert: var(--bg-invert);
+  --color-text-invert: var(--text-invert);
+
+  /* Branding & Accents */
+  --color-primary: var(--primary);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-accent: var(--accent);
+  
+  /* Borders & Effects */
+  --color-border: var(--border-color);
+  --shadow-glow: var(--glow-shadow);
+  --radius-dashboard: 2rem;
+  
+  /* Glassmorphism Preset */
+  --bg-glass: rgba(var(--glass-rgb), 0.7);
+}
+
+/* ============================================================
+   DARK MODE (DEFAULT) 
+   ============================================================ */
+:root {
+  /* Color Values */
+  --bg-primary: #0a0a0b;      /* Deep black for high-end feel */
+  --bg-shaded: #000000;       
+  --card: #121214;            
+  --bg-alt: #18181b;          
+  --bg-surface: #1c1c1f;      
+  --glass-rgb: 18, 18, 20;
+
+  --bg-invert: #ffffff;
+  --text-primary: #f8fafc;   
+  --text-muted: #94a3b8;
+  --text-invert: #000000;
+
+  --primary: #f97316;         /* Changed to Orange for that "Appetite" trigger */
+  --border-color: rgba(255, 255, 255, 0.08);
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --accent: #a855f7;
+
+  --glow-shadow: 0 0 25px rgba(249, 115, 22, 0.15);
+}
+
+/* ============================================================
+   LIGHT MODE
+   ============================================================ */
+.light {
+  --bg-primary: #f8fafc;      
+  --bg-shaded: #f1f5f9;       
+  --card: #ffffff;            
+  --bg-alt: #ffffff;          
+  --bg-surface: #fdfdfd;      
+  --glass-rgb: 255, 255, 255;
+
+  --bg-invert: #000000;
+  --text-primary: #0f172a;
+  --text-muted: #64748b;
+  --text-invert: #ffffff;
+
+  --primary: #ea580c;
+  --border-color: #e2e8f0;
+
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --accent: #9333ea;
+
+  --glow-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================================
+   ANIMATIONS & UTILITIES
+   ============================================================ */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Smooth theme transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
