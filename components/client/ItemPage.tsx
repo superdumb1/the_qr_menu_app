@@ -50,7 +50,7 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
                     >
                         <ChevronLeft size={24} />
                     </button>
-                 
+
                 </div>
             </div>
 
@@ -71,8 +71,19 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
                         {item.itemName}
                     </h1>
                 </div>
-
-                {/* STATS */}
+                <div className="fixed bottom-[100px] left-0 right-0 px-6 z-50">
+                    <div className="max-w-lg mx-auto">
+                        <div className="bg-card/40 backdrop-blur-3xl border border-white/10 p-4 rounded-[3rem] shadow-2xl flex justify-center items-center">
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-xl font-black text-primary">Rs.</span>
+                                <span className="text-4xl font-black italic tracking-tighter text-white">
+                                    {item.rate}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* STATS
                 <div className="grid grid-cols-3 gap-3 mb-10">
                     {[
                         { icon: Clock, label: "15 Mins", color: "text-primary" },
@@ -84,7 +95,8 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
                             <span className="text-[10px] font-black uppercase text-text-muted">{stat.label}</span>
                         </div>
                     ))}
-                </div>
+                </div> */}
+
 
                 <div className="space-y-4">
                     <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/80">Ingredients</h3>
@@ -93,30 +105,18 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
                     </p>
                 </div>
 
-                {/* CHEF NOTE */}
+                {/* CHEF NOTE
                 <div className="mt-8 p-6 rounded-[2.5rem] bg-card border border-border flex gap-4 items-center">
                     <Info size={20} className="text-primary shrink-0" />
                     <p className="text-sm italic text-text-muted leading-snug">
                         Pairs perfectly with our house specialty chilled beverages.
                     </p>
-                </div>
+                </div> */}
 
                 <div className="h-72 w-full" />
             </div>
 
-            {/* PRICE BAR */}
-            <div className="fixed bottom-[100px] left-0 right-0 px-6 z-50">
-                <div className="max-w-lg mx-auto">
-                    <div className="bg-card/40 backdrop-blur-3xl border border-white/10 p-4 rounded-[3rem] shadow-2xl flex justify-center items-center">
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-xl font-black text-primary">Rs.</span>
-                            <span className="text-4xl font-black italic tracking-tighter text-white">
-                                {item.rate}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     );
 };
