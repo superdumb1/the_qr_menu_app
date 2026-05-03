@@ -1,6 +1,6 @@
 "use client"
 import React, { useMemo } from 'react';
-import { ChevronLeft, Share2, Heart, Clock, Utensils, Leaf, Flame, Info } from 'lucide-react';
+import { ChevronLeft, Leaf, Flame } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMenu } from '@/providers/MenuDataProvider';
 
@@ -32,6 +32,7 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
         : item.imageUrl;
 
     return (
+        /* Use bg-bg to ensure background follows theme */
         <div className="min-h-screen bg-bg text-text animate-in fade-in duration-500">
 
             {/* HERO */}
@@ -41,16 +42,17 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
                     alt={item.itemName}
                     className="h-full w-full object-cover scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-black/60" />
+                {/* Gradient: use bg-bg/60 for a smooth blend into the theme background */}
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
 
                 <div className="absolute top-6 left-0 right-0 px-6 flex justify-between items-center z-10">
                     <button
                         onClick={handleBack}
-                        className="h-12 w-12 rounded-2xl bg-black/20 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white active:scale-90 transition-transform"
+                        /* Use bg-surface/20 and text-text to ensure visibility */
+                        className="h-12 w-12 rounded-2xl bg-surface/40 backdrop-blur-xl border border-border flex items-center justify-center text-text active:scale-90 transition-transform"
                     >
                         <ChevronLeft size={24} />
                     </button>
-
                 </div>
             </div>
 
@@ -67,56 +69,37 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
                             <Flame size={10} /> Popular
                         </span>
                     </div>
-                    <h1 className="text-5xl font-black uppercase tracking-tighter leading-none italic text-white">
+                    {/* FIXED: Changed text-white to text-text */}
+                    <h1 className="text-5xl font-black uppercase tracking-tighter leading-none italic text-text">
                         {item.itemName}
                     </h1>
                 </div>
+
+                {/* PRICE BAR */}
                 <div className="fixed bottom-[100px] left-0 right-0 px-6 z-50">
                     <div className="max-w-lg mx-auto">
-                        <div className="bg-card/40 backdrop-blur-3xl border border-white/10 p-4 rounded-[3rem] shadow-2xl flex justify-center items-center">
+                        {/* Use bg-card/60 and border-border */}
+                        <div className="bg-card/80 backdrop-blur-3xl border border-border p-4 rounded-[3rem] shadow-glow flex justify-center items-center">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-xl font-black text-primary">Rs.</span>
-                                <span className="text-4xl font-black italic tracking-tighter text-white">
+                                {/* FIXED: Changed text-white to text-text */}
+                                <span className="text-4xl font-black italic tracking-tighter text-text">
                                     {item.rate}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                {/* STATS
-                <div className="grid grid-cols-3 gap-3 mb-10">
-                    {[
-                        { icon: Clock, label: "15 Mins", color: "text-primary" },
-                        { icon: Flame, label: "450 Cal", color: "text-danger" },
-                        { icon: Utensils, label: "Organic", color: "text-accent" }
-                    ].map((stat, i) => (
-                        <div key={i} className="bg-card p-4 rounded-[2rem] border border-border/40 flex flex-col items-center gap-1">
-                            <stat.icon size={18} className={stat.color} />
-                            <span className="text-[10px] font-black uppercase text-text-muted">{stat.label}</span>
-                        </div>
-                    ))}
-                </div> */}
-
 
                 <div className="space-y-4">
-                    {/* <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/80">Ingredients</h3> */}
+                    {/* text-text/70 ensures it's readable but muted in both themes */}
                     <p className="text-text/70 leading-relaxed font-medium">
                         {item.description !== "-" ? item.description : "A signature resort special, crafted with fresh seasonal ingredients and traditional spices."}
                     </p>
                 </div>
 
-                {/* CHEF NOTE
-                <div className="mt-8 p-6 rounded-[2.5rem] bg-card border border-border flex gap-4 items-center">
-                    <Info size={20} className="text-primary shrink-0" />
-                    <p className="text-sm italic text-text-muted leading-snug">
-                        Pairs perfectly with our house specialty chilled beverages.
-                    </p>
-                </div> */}
-
                 <div className="h-72 w-full" />
             </div>
-
-
         </div>
     );
 };
