@@ -71,9 +71,7 @@ const ItemsGridView = ({ selectedCategory }: { selectedCategory: Category }) => 
                             </p>
                         </div>
                     </div>
-                    <div className="h-14 w-14 bg-surface rounded-full border border-border flex items-center justify-center text-primary/40">
-                        <UtensilsCrossed size={24} />
-                    </div>
+             
                 </div>
                 <div className="h-[2px] w-full bg-gradient-to-r from-primary via-primary/20 to-transparent mt-6 rounded-full opacity-30" />
             </header>
