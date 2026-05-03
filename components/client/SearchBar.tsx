@@ -56,11 +56,11 @@ const SearchBar = () => {
             {/* Subtle "Quick Hint" using ABSOLUTE positioning so it doesn't break flex alignment */}
             {!searchQuery && (
                 <div className="absolute  bg-bg/80 backdrop-blur-xl  py-1 top-[calc(100%+12px)] left-0 w-full flex gap-4 px-2 overflow-x-auto no-scrollbar z-10">
-                    {['Momo', 'Biryani',  'Pizza'].map((tag) => (
+                    {['Momo', 'Biryani', 'Coffee', 'Pizza'].map((tag) => (
                         <button
                             key={tag}
                             onClick={() => setSearchQuery(tag)}
-                            className="text-[15px] font-black uppercase tracking-widest text-text-muted/50 hover:text-primary transition-colors flex-shrink-0"
+                            className="text-[12px] font-black uppercase tracking-widest text-text-muted/50 hover:text-primary transition-colors flex-shrink-0"
                         >
                             #{tag}
                         </button>

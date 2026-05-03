@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { newJson } from '@/lib/NewJson'
 import Fuse from 'fuse.js'
 
 export const MenuContext = createContext<any>(null)
@@ -17,24 +16,42 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
 
     const [searchQuery, setSearchQuery] = useState('')
     const [lang, setLang] = useState<'en' | 'ne'>('en')
+    
+    // API States
+    const [allCategories, setAllCategories] = useState<any[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     // --- Table Number Logic ---
-    // Get table from URL (e.g., ?table=12)
     const tableNo = searchParams.get('table')
 
-    // Function to update table number in URL without a full page reload
     const setTableNo = (num: string | number) => {
         const params = new URLSearchParams(searchParams.toString())
         params.set('table', num.toString())
         router.push(`${pathname}?${params.toString()}`, { scroll: false })
     }
+    
+    // --- Fetch Data from Dummy API ---
+    useEffect(() => {
+        const fetchMenu = async () => {
+            try {
+                setIsLoading(true)
+                const response = await fetch('/api/food')
+                if (!response.ok) throw new Error('Failed to fetch menu')
+                const data = await response.json()
+                setAllCategories(data)
+            } catch (err: any) {
+                setError(err.message)
+            } finally {
+                setIsLoading(false)
+            }
+        }
 
-    // 1. Categories
-    const allCategories = useMemo(() => {
-        return newJson[0]?.data || []
+        fetchMenu()
     }, [])
 
     // 2. Flatten items + precompute normalized fields
+    // This now depends on the dynamic 'allCategories' state
     const allItems = useMemo(() => {
         const items: any[] = []
         allCategories.forEach((cat: any) => {
@@ -92,20 +109,19 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
             .map(res => res.item)
     }, [searchQuery, fuse])
 
-    const toggleLang = () => setLang(prev => (prev === 'en' ? 'ne' : 'en'))
 
-    // 5. Context value (Now includes tableNo)
+    // 5. Context value
     const contextValue = useMemo(() => ({
-        newJson,
         allCategories,
         filteredItems,
         searchQuery,
         setSearchQuery,
         lang,
-        toggleLang,
-        tableNo,    // The current table number from URL
-        setTableNo  // Function to change it
-    }), [searchQuery, filteredItems, lang, allCategories, tableNo])
+        tableNo,
+        setTableNo,
+        isLoading, 
+        error
+    }), [searchQuery, filteredItems, lang, allCategories, tableNo, isLoading, error])
 
     return (
         <MenuContext.Provider value={contextValue}>
