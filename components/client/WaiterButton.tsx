@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useMenu } from '@/providers/MenuDataProvider';
-import { BellRing, Loader2, Info, ReceiptText, Plus, X } from 'lucide-react';
+import { BellRing, Loader2, Info, ReceiptText, X } from 'lucide-react';
 
 const WaiterButton = () => {
     const { lang, tableNo } = useMenu();
@@ -16,9 +16,7 @@ const WaiterButton = () => {
     const triggerAction = async (type: 'WAITER' | 'BILL') => {
         if (isCalling || isUnknownTable) return;
         setIsCalling(type);
-        // Auto-close menu on action
         setIsOpen(false);
-
         try {
             await fetch('/api/waiter/call', {
                 method: 'POST',
@@ -35,69 +33,75 @@ const WaiterButton = () => {
     if (!mounted) return null;
 
     return (
-        <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3">
+        <div className="fixed bottom-8 right-6 z-[100] flex flex-col items-end gap-4">
             
             {/* Expanded Menu Options */}
             {isOpen && !isUnknownTable && (
-                <div className="flex flex-col gap-3 mb-2 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-300 origin-bottom">
-                    {/* Bill Option */}
+                <div className="flex flex-col gap-4 mb-2 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500 origin-bottom">
                     <button
                         onClick={() => triggerAction('BILL')}
-                        className="flex items-center gap-3 bg-surface/90 backdrop-blur-xl border border-border p-2 pr-5 rounded-full shadow-2xl group active:scale-95 transition-all"
+                        className="flex items-center gap-3 bg-card/80 backdrop-blur-2xl border border-border p-2 pr-6 rounded-full shadow-2xl active:scale-95 transition-all"
                     >
-                        <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center text-success">
-                            <ReceiptText size={18} />
+                        <div className="h-11 w-11 rounded-full bg-success/20 flex items-center justify-center text-success">
+                            <ReceiptText size={20} />
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-text">
-                            {lang === 'en' ? 'Check Bill' : 'बिल हेर्नुहोस्'}
+                        <span className="text-[11px] font-black uppercase tracking-[0.15em]">
+                            {lang === 'en' ? 'Get Bill' : 'बिल माग्नुहोस्'}
                         </span>
                     </button>
 
-                    {/* Waiter Option */}
                     <button
                         onClick={() => triggerAction('WAITER')}
-                        className="flex items-center gap-3 bg-surface/90 backdrop-blur-xl border border-border p-2 pr-5 rounded-full shadow-2xl group active:scale-95 transition-all"
+                        className="flex items-center gap-3 bg-card/80 backdrop-blur-2xl border border-border p-2 pr-6 rounded-full shadow-2xl active:scale-95 transition-all"
                     >
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                            <BellRing size={18} />
+                        <div className="h-11 w-11 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                            <BellRing size={20} />
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-text">
-                            {lang === 'en' ? 'Call Service' : 'सेवा बोलाउनुहोस्'}
+                        <span className="text-[11px] font-black uppercase tracking-[0.15em]">
+                            {lang === 'en' ? 'Call Waiter' : 'वेटर बोलाउनुहोस्'}
                         </span>
                     </button>
                 </div>
             )}
 
-            {/* Main Toggle / Status FAB */}
             <div className="relative">
-                {/* Table Badge Overlay */}
-                <div className="absolute -top-2 -left-2 z-10 bg-black text-[8px] font-black px-2 py-0.5 rounded-md border border-white/10 text-white uppercase tracking-tighter">
+                {/* 
+                   THE BUBBLE ENGINE 
+                   We use 4 rings with 1s intervals. 
+                   Since the animation is 4s long, there will always be 4 rings visible.
+                */}
+                {!isOpen && !isCalling && !isUnknownTable && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '0s' }} />
+                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '1s' }} />
+                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '2s' }} />
+                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '3s' }} />
+                    </div>
+                )}
+
+                {/* Table Badge */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-text text-bg text-[9px] font-black px-3 py-0.5 rounded-full border-2 border-bg shadow-xl">
                     T-{tableNo || '??'}
                 </div>
 
                 <button
                     onClick={() => isUnknownTable ? null : setIsOpen(!isOpen)}
-                    className={`h-16 w-16 rounded-full flex items-center justify-center shadow-glow transition-all active:scale-90 border-2 ${
+                    className={`h-16 w-16 rounded-full flex items-center justify-center shadow-orange-glow transition-all duration-500 active:scale-75 border-4 z-10 relative ${
                         isUnknownTable 
-                        ? 'bg-card border-border text-text-muted' 
-                        : isOpen ? 'bg-background border-primary text-primary rotate-0' : 'bg-primary border-primary/20 text-white'
+                        ? 'bg-card border-border text-text-muted opacity-50' 
+                        : isOpen 
+                            ? 'bg-background border-primary text-primary rotate-180' 
+                            : 'bg-primary border-primary/20 text-white'
                     }`}
                 >
                     {isCalling ? (
-                        <Loader2 size={24} className="animate-spin" />
+                        <Loader2 size={28} className="animate-spin" />
                     ) : isOpen ? (
-                        <X size={24} />
+                        <X size={28} />
                     ) : isUnknownTable ? (
-                        <Info size={24} />
+                        <Info size={28} />
                     ) : (
-                        <div className="relative">
-                           <UtensilsIcon size={24} />
-                           {/* Pulse indicator for 'active session' */}
-                           <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
-                           </span>
-                        </div>
+                        <UtensilsIcon size={28} />
                     )}
                 </button>
             </div>
@@ -105,7 +109,6 @@ const WaiterButton = () => {
     );
 };
 
-// Simple custom icon or use UtensilsCrossed
 const UtensilsIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />

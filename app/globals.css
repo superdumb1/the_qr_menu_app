@@ -139,3 +139,22 @@
     );
   }
 }
+
+@keyframes sonar-hyper {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  /* Halfway point to keep the circle visible longer */
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(3.5);
+    opacity: 0;
+  }
+}
+
+.animate-sonar-active {
+  animation: sonar-hyper 4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
