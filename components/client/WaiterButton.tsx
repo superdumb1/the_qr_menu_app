@@ -82,14 +82,9 @@ const WaiterButton = () => {
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
                     <div className="flex flex-col items-center">
                         <div className="bg-background/40 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full shadow-2xl flex items-center gap-2">
-                           {/* Micro Signal Icon */}
-                           <div className="flex gap-0.5 items-end h-2">
-                                <div className="w-0.5 h-1 bg-primary rounded-full" />
-                                <div className="w-0.5 h-1.5 bg-primary rounded-full" />
-                                <div className="w-0.5 h-2 bg-primary rounded-full" />
-                           </div>
-                           <span className="text-[10px] font-black text-text tracking-tighter">
-                             TABLE <span className="text-primary">{tableNo || '??'}</span>
+             
+                           <span className="text-[10px] flex gap-2 justify-between font-black text-text tracking-tighter">
+                             TABLE <span className="">{tableNo || '??'}</span>
                            </span>
                         </div>
                         {/* Little connecting stem to make it look anchored */}
