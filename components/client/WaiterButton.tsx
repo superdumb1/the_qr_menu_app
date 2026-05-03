@@ -65,22 +65,36 @@ const WaiterButton = () => {
             )}
 
             <div className="relative">
-                {/* 
-                   PURE ORANGE BUBBLE ENGINE 
-                   4 rings, all using the primary brand color with staggered timing
-                */}
+                {/* SONAR ENGINE (Pure Orange) */}
                 {!isOpen && !isCalling && !isUnknownTable && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '0s' }} />
-                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '1s' }} />
-                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '2s' }} />
-                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '3s' }} />
+                        {[0, 1, 2, 3].map((i) => (
+                            <div 
+                                key={i}
+                                className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" 
+                                style={{ animationDelay: `${i}s` }} 
+                            />
+                        ))}
                     </div>
                 )}
 
-                {/* Table Badge */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-text text-bg text-[10px] font-black px-3 py-0.5 rounded-full border-2 border-bg shadow-xl uppercase">
-                    T-{tableNo || '??'}
+                {/* THE NEW "PREMIUM" TABLE BADGE */}
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+                    <div className="flex flex-col items-center">
+                        <div className="bg-background/40 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full shadow-2xl flex items-center gap-2">
+                           {/* Micro Signal Icon */}
+                           <div className="flex gap-0.5 items-end h-2">
+                                <div className="w-0.5 h-1 bg-primary rounded-full" />
+                                <div className="w-0.5 h-1.5 bg-primary rounded-full" />
+                                <div className="w-0.5 h-2 bg-primary rounded-full" />
+                           </div>
+                           <span className="text-[10px] font-black text-text tracking-tighter">
+                             TABLE <span className="text-primary">{tableNo || '??'}</span>
+                           </span>
+                        </div>
+                        {/* Little connecting stem to make it look anchored */}
+                        <div className="w-[2px] h-2 bg-white/20 shadow-glow" />
+                    </div>
                 </div>
 
                 <button
@@ -89,7 +103,7 @@ const WaiterButton = () => {
                         isUnknownTable 
                         ? 'bg-card border-border text-text-muted opacity-50' 
                         : isOpen 
-                            ? 'bg-bg border-primary text-primary rotate-180' 
+                            ? 'bg-bg border-primary text-primary rotate-180 shadow-none' 
                             : 'bg-primary border-white/20 text-white hover:scale-105'
                     }`}
                 >
