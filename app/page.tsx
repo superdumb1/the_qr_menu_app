@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { newJson } from '@/lib/NewJson';
 import ItemsGridView from '@/components/client/ItemsGridView';
 import CategoryGridView from '@/components/client/CategoryGridView';
+import ItemPage from '@/components/client/ItemPage';
 
 function MenuContent() {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +16,7 @@ function MenuContent() {
 
   const selectedCategoryId = searchParams.get('cat');
   const rawCategories = newJson[0]?.data || [];
+  const selectedItemId=searchParams.get('item')
 
   const sortedCategories = [...rawCategories]
     .filter(cat => cat.isActive)
@@ -27,6 +29,7 @@ function MenuContent() {
   // Hydration safety
   if (!mounted) return <div className="min-h-screen bg-bg" />;
 
+  if(selectedItemId) return <ItemPage itemId={selectedItemId}/>
   if (selectedCategory) {
     return <ItemsGridView selectedCategory={selectedCategory}/>;
   }

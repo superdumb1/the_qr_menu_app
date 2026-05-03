@@ -1,11 +1,13 @@
 "use client"
-import React from 'react'
+import React, { useMemo } from 'react' // Added useMemo
 import { useMenu } from '@/providers/MenuDataProvider'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation' // Added this
 import { SearchX, ChevronRight, Utensils, Zap } from 'lucide-react'
 
 const SearchResults = () => {
     const { searchQuery, setSearchQuery, filteredItems } = useMenu()
+    const searchParams = useSearchParams(); // Access current URL params
 
     if (!searchQuery) return null;
 
@@ -45,52 +47,60 @@ const SearchResults = () => {
 
                 {/* --- Vertical List --- */}
                 <div className="flex flex-col gap-4">
-                    {filteredItems.map((item: any) => (
-                        <Link
-                            key={item.id}
-                            href={`?cat=${item.categoryId}`}
-                            onClick={() => setSearchQuery('')}
-                            className={`group flex items-center gap-4 bg-card p-3 rounded-[2rem] border border-border shadow-sm active:scale-[0.97] transition-all ${!item.isAvailable ? 'opacity-50 grayscale' : ''}`}
-                        >
-                            {/* Improved Thumbnail */}
-                            <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[1.5rem] border border-border bg-surface">
-                                <img 
-                                    src={item.localImagePath ? `/${item.localImagePath}` : (item.imageUrl !== "-" ? item.imageUrl : fallbackImage)}
-                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt={item.itemName}
-                                    onError={(e: any) => { e.target.src = fallbackImage; }}
-                                />
-                                {!item.isAvailable && (
-                                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
-                                        <span className="text-[8px] font-black text-white uppercase tracking-widest bg-red-600 px-2 py-1 rounded-md shadow-lg">OUT</span>
-                                    </div>
-                                )}
-                            </div>
+                    {filteredItems.map((item: any) => {
+                        // IMPROVISATION: Construct a link that keeps Table ID and Category, but adds Item
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.set('cat', item.categoryId); // Set the category context
+                        params.set('item', item.id);       // Set the specific item
+                        const itemHref = `?${params.toString()}`;
 
-                            {/* Content Section */}
-                            <div className="flex-1 min-w-0 py-1">
-                                <div className="flex items-center gap-1.5 mb-1">
-                                    <span className="text-[8px] font-black text-primary uppercase tracking-[0.15em]">
-                                        {item.categoryName || 'Chef Special'}
-                                    </span>
+                        return (
+                            <Link
+                                key={item.id}
+                                href={itemHref} // FIXED: Now goes directly to ItemPage
+                                onClick={() => setSearchQuery('')}
+                                className={`group flex items-center gap-4 bg-card p-3 rounded-[2rem] border border-border shadow-sm active:scale-[0.97] transition-all ${!item.isAvailable ? 'opacity-50 grayscale' : ''}`}
+                            >
+                                {/* Thumbnail */}
+                                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[1.5rem] border border-border bg-surface">
+                                    <img 
+                                        src={item.localImagePath ? `/${item.localImagePath}` : (item.imageUrl !== "-" ? item.imageUrl : fallbackImage)}
+                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        alt={item.itemName}
+                                        onError={(e: any) => { e.target.src = fallbackImage; }}
+                                    />
+                                    {!item.isAvailable && (
+                                        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                                            <span className="text-[8px] font-black text-white uppercase tracking-widest bg-red-600 px-2 py-1 rounded-md shadow-lg">OUT</span>
+                                        </div>
+                                    )}
                                 </div>
-                                
-                                <h4 className="text-[17px] font-black text-text capitalize truncate tracking-tight">
-                                    {item.itemName}
-                                </h4>
-                                
-                                <div className="flex items-center justify-between mt-2">
-                                    <p className="text-xl font-black text-text tracking-tighter">
-                                        <span className="text-[10px] font-bold text-text-muted mr-1">Rs.</span>
-                                        {item.rate}
-                                    </p>
-                                    <div className="h-9 w-9 rounded-full bg-surface border border-border flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all">
-                                        <ChevronRight size={16} className="text-text-muted group-hover:text-white" />
+
+                                {/* Content Section */}
+                                <div className="flex-1 min-w-0 py-1">
+                                    <div className="flex items-center gap-1.5 mb-1">
+                                        <span className="text-[8px] font-black text-primary uppercase tracking-[0.15em]">
+                                            {item.categoryName || 'Chef Special'}
+                                        </span>
+                                    </div>
+                                    
+                                    <h4 className="text-[17px] font-black text-text capitalize truncate tracking-tight">
+                                        {item.itemName}
+                                    </h4>
+                                    
+                                    <div className="flex items-center justify-between mt-2">
+                                        <p className="text-xl font-black text-text tracking-tighter">
+                                            <span className="text-[10px] font-bold text-text-muted mr-1">Rs.</span>
+                                            {item.rate}
+                                        </p>
+                                        <div className="h-9 w-9 rounded-full bg-surface border border-border flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all">
+                                            <ChevronRight size={16} className="text-text-muted group-hover:text-white" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* --- Empty State --- */}

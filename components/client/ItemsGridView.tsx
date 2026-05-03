@@ -34,14 +34,14 @@ const ItemsGridView = ({ selectedCategory }: { selectedCategory: Category }) => 
 
     const sortedItems = useMemo(() => {
         if (!selectedCategory?.menuItems) return [];
-        return [...selectedCategory.menuItems].sort((a, b) => 
+        return [...selectedCategory.menuItems].sort((a, b) =>
             a.itemName.localeCompare(b.itemName)
         );
     }, [selectedCategory]);
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            
+
             {/* STICKY BACK BUTTON */}
             <div className="sticky top-[130px] z-[50] mb-6 px-1 pointer-events-none">
                 <Link
@@ -71,7 +71,7 @@ const ItemsGridView = ({ selectedCategory }: { selectedCategory: Category }) => 
                             </p>
                         </div>
                     </div>
-             
+
                 </div>
                 <div className="h-[2px] w-full bg-gradient-to-r from-primary via-primary/20 to-transparent mt-6 rounded-full opacity-30" />
             </header>
@@ -80,6 +80,7 @@ const ItemsGridView = ({ selectedCategory }: { selectedCategory: Category }) => 
                 {sortedItems.map((item) => (
                     <MenuItemCard
                         key={item.id}
+                        id={item.id}
                         name={item.itemName}
                         price={item.rate}
                         description={item.description === "-" ? "" : item.description}
@@ -93,7 +94,7 @@ const ItemsGridView = ({ selectedCategory }: { selectedCategory: Category }) => 
             {sortedItems.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-32 text-center">
                     <div className="h-16 w-16 bg-surface rounded-full flex items-center justify-center mb-4 border border-dashed border-border">
-                         <UtensilsCrossed size={32} className="text-text-muted" />
+                        <UtensilsCrossed size={32} className="text-text-muted" />
                     </div>
                     <p className="text-text-muted font-black uppercase text-[10px] tracking-[0.3em]">
                         Kitchen Restocking
