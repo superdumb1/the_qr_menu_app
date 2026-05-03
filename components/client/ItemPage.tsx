@@ -105,12 +105,12 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
             </div>
 
             {/* PRICE BAR */}
-            <div className="fixed bottom-[120px] left-0 right-0 px-6 z-50">
+            <div className="fixed bottom-[100px] left-0 right-0 px-6 z-50">
                 <div className="max-w-lg mx-auto">
                     <div className="bg-card/40 backdrop-blur-3xl border border-white/10 p-4 rounded-[3rem] shadow-2xl flex justify-center items-center">
                         <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-black text-primary">Rs.</span>
-                            <span className="text-6xl font-black italic tracking-tighter text-white">
+                            <span className="text-xl font-black text-primary">Rs.</span>
+                            <span className="text-4xl font-black italic tracking-tighter text-white">
                                 {item.rate}
                             </span>
                         </div>
