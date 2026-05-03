@@ -41,7 +41,7 @@ const CategoryGridView = ({ sortedCategories }: { sortedCategories: any }) => {
                             />
 
                             {/* CHANGED: Gradient now fades to the theme's shaded/card color rather than hardcoded black */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-bg-shaded/90 via-transparent to-transparent" />
+                            <div className="absolute inset-0 overlay-gradient" />
 
                             {/* CHANGED: Swapped bg-black/60 for bg-glass and text-white for text-text */}
                             <div className="relative z-20 mt-auto p-3 rounded-[1.5rem] bg-glass backdrop-blur-lg border border-border shadow-2xl transition-transform group-hover:-translate-y-1">
