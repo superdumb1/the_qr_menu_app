@@ -35,29 +35,29 @@ const WaiterButton = () => {
     return (
         <div className="fixed bottom-8 right-6 z-[100] flex flex-col items-end gap-4">
             
-            {/* Expanded Menu Options */}
+            {/* Expanded Options */}
             {isOpen && !isUnknownTable && (
                 <div className="flex flex-col gap-4 mb-2 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500 origin-bottom">
                     <button
                         onClick={() => triggerAction('BILL')}
-                        className="flex items-center gap-3 bg-card/80 backdrop-blur-2xl border border-border p-2 pr-6 rounded-full shadow-2xl active:scale-95 transition-all"
+                        className="flex items-center gap-3 bg-card/90 backdrop-blur-2xl border border-border p-2 pr-6 rounded-full shadow-2xl active:scale-95 transition-all group"
                     >
-                        <div className="h-11 w-11 rounded-full bg-success/20 flex items-center justify-center text-success">
+                        <div className="h-11 w-11 rounded-full bg-success/10 flex items-center justify-center text-success group-hover:bg-success group-hover:text-white transition-colors">
                             <ReceiptText size={20} />
                         </div>
-                        <span className="text-[11px] font-black uppercase tracking-[0.15em]">
+                        <span className="text-[11px] font-black uppercase tracking-[0.15em] text-text">
                             {lang === 'en' ? 'Get Bill' : 'बिल माग्नुहोस्'}
                         </span>
                     </button>
 
                     <button
                         onClick={() => triggerAction('WAITER')}
-                        className="flex items-center gap-3 bg-card/80 backdrop-blur-2xl border border-border p-2 pr-6 rounded-full shadow-2xl active:scale-95 transition-all"
+                        className="flex items-center gap-3 bg-card/90 backdrop-blur-2xl border border-border p-2 pr-6 rounded-full shadow-2xl active:scale-95 transition-all group"
                     >
-                        <div className="h-11 w-11 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                        <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                             <BellRing size={20} />
                         </div>
-                        <span className="text-[11px] font-black uppercase tracking-[0.15em]">
+                        <span className="text-[11px] font-black uppercase tracking-[0.15em] text-text">
                             {lang === 'en' ? 'Call Waiter' : 'वेटर बोलाउनुहोस्'}
                         </span>
                     </button>
@@ -66,21 +66,20 @@ const WaiterButton = () => {
 
             <div className="relative">
                 {/* 
-                   THE BUBBLE ENGINE 
-                   We use 4 rings with 1s intervals. 
-                   Since the animation is 4s long, there will always be 4 rings visible.
+                   PURE ORANGE BUBBLE ENGINE 
+                   4 rings, all using the primary brand color with staggered timing
                 */}
                 {!isOpen && !isCalling && !isUnknownTable && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '0s' }} />
-                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '1s' }} />
-                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '2s' }} />
-                        <div className="absolute h-full w-full rounded-full border-2 border-primary animate-sonar-active" style={{ animationDelay: '3s' }} />
+                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '0s' }} />
+                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '1s' }} />
+                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '2s' }} />
+                        <div className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" style={{ animationDelay: '3s' }} />
                     </div>
                 )}
 
                 {/* Table Badge */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-text text-bg text-[9px] font-black px-3 py-0.5 rounded-full border-2 border-bg shadow-xl">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-text text-bg text-[10px] font-black px-3 py-0.5 rounded-full border-2 border-bg shadow-xl uppercase">
                     T-{tableNo || '??'}
                 </div>
 
@@ -90,8 +89,8 @@ const WaiterButton = () => {
                         isUnknownTable 
                         ? 'bg-card border-border text-text-muted opacity-50' 
                         : isOpen 
-                            ? 'bg-background border-primary text-primary rotate-180' 
-                            : 'bg-primary border-primary/20 text-white'
+                            ? 'bg-bg border-primary text-primary rotate-180' 
+                            : 'bg-primary border-white/20 text-white hover:scale-105'
                     }`}
                 >
                     {isCalling ? (
@@ -110,7 +109,7 @@ const WaiterButton = () => {
 };
 
 const UtensilsIcon = ({ size }: { size: number }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
     </svg>
 );
