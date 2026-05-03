@@ -1,12 +1,12 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useMenu } from '@/providers/MenuDataProvider';
+import { useMenu } from '@/providers/MenuDataProvider'; // Import useMenu
 import { BellRing, Loader2, Info } from 'lucide-react';
 
 const WaiterButton = () => {
-    const { lang } = useMenu();
-    const searchParams = useSearchParams();
+    // Extract tableNo and lang from our global context
+    const { lang, tableNo } = useMenu(); 
+    
     const [isCalling, setIsCalling] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -14,16 +14,18 @@ const WaiterButton = () => {
         setMounted(true);
     }, []);
 
-    const tableNumber = searchParams.get('table');
-    const isUnknownTable = !tableNumber || tableNumber === "Unknown";
+    // Logic for unknown tables
+    const isUnknownTable = !tableNo || tableNo === "Unknown" || tableNo === "??";
 
     const handleCallWaiter = async () => {
         if (isCalling || isUnknownTable) return;
         setIsCalling(true);
         
-        // Simulating the API call to your local Windows server
-        await new Promise(resolve => setTimeout(resolve, 2500));
-        setIsCalling(false);
+        try {
+            await new Promise(resolve => setTimeout(resolve, 2500));
+        } finally {
+            setIsCalling(false);
+        }
     };
 
     if (!mounted) return null;
@@ -34,20 +36,19 @@ const WaiterButton = () => {
             {/* Table Badge - Glassmorphism style */}
             <div className="bg-black/40 backdrop-blur-md border border-white/10 text-white text-[9px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl flex items-center gap-2">
                 <div className={`h-1.5 w-1.5 rounded-full ${isUnknownTable ? 'bg-danger' : 'bg-success animate-pulse'}`} />
-                {lang === 'en' ? 'Table' : 'टेबल'} {tableNumber || '??'}
+                {lang === 'en' ? 'Table' : 'टेबल'} {tableNo || '??'}
             </div>
 
             {/* Main Action Button */}
             <button
                 onClick={handleCallWaiter}
                 disabled={isCalling || isUnknownTable}
-                className={`relative group flex items-center gap-4 pl-6 pr-5 py-4 rounded-[2rem] shadow-glow transition-all active:scale-90 overflow-hidden ${
+                className={`relative group flex items-center gap-4 pl-6 pr-5 py-4 rounded-[2rem] shadow-glow transition-all active:scale-95 overflow-hidden ${
                     isCalling || isUnknownTable 
                     ? 'bg-card border-border text-text-muted opacity-80 cursor-not-allowed' 
                     : 'bg-primary text-white border border-primary/20'
                 }`}
             >
-                {/* Visual Feedback for "Call Successful" or "Progress" */}
                 {isCalling && (
                     <div className="absolute inset-0 bg-white/10 animate-pulse" />
                 )}
@@ -60,7 +61,7 @@ const WaiterButton = () => {
                     </span>
                     {!isCalling && (
                         <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest mt-1">
-                            {isUnknownTable ? 'Missing Table ID' : 'Direct Assistance'}
+                            {isUnknownTable ? 'Table ID Required' : 'Direct Assistance'}
                         </span>
                     )}
                 </div>

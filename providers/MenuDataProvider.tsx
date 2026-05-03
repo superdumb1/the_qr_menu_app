@@ -1,21 +1,33 @@
 "use client"
 
-import React, { createContext, useContext, useState, useMemo } from 'react'
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { newJson } from '@/lib/NewJson'
 import Fuse from 'fuse.js'
 
 export const MenuContext = createContext<any>(null)
 
-// 🔥 Normalize helper (important for good search)
 const normalize = (str: string = '') =>
-    str
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, ' ')
+    str.toLowerCase().trim().replace(/\s+/g, ' ')
 
 const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
+
     const [searchQuery, setSearchQuery] = useState('')
     const [lang, setLang] = useState<'en' | 'ne'>('en')
+
+    // --- Table Number Logic ---
+    // Get table from URL (e.g., ?table=12)
+    const tableNo = searchParams.get('table')
+
+    // Function to update table number in URL without a full page reload
+    const setTableNo = (num: string | number) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('table', num.toString())
+        router.push(`${pathname}?${params.toString()}`, { scroll: false })
+    }
 
     // 1. Categories
     const allCategories = useMemo(() => {
@@ -25,24 +37,18 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
     // 2. Flatten items + precompute normalized fields
     const allItems = useMemo(() => {
         const items: any[] = []
-
         allCategories.forEach((cat: any) => {
             cat.menuItems?.forEach((item: any) => {
                 items.push({
                     ...item,
                     categoryName: cat.name,
                     categoryId: cat.id,
-
-                    // 🔥 precomputed (performance + accuracy)
                     _name: normalize(item.itemName),
                     _category: normalize(cat.name),
-
-                    // optional Nepali support (safe fallback)
                     _nameNe: normalize(item.itemNameNe || '')
                 })
             })
         })
-
         return items
     }, [allCategories])
 
@@ -55,8 +61,6 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
                 { name: '_category', weight: 0.15 }
             ],
             threshold: 0.3,
-            distance: 100,
-            ignoreLocation: true,
             minMatchCharLength: 2,
             includeScore: true,
             shouldSort: true
@@ -67,43 +71,30 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
     const filteredItems = useMemo(() => {
         const queryRaw = searchQuery.trim()
         if (!queryRaw) return []
-
         const query = normalize(queryRaw)
-
         const results = fuse.search(query)
 
         return results
             .sort((a, b) => {
                 const aName = a.item._name
                 const bName = b.item._name
-
-                // ✅ exact match boost
                 const aExact = aName === query
                 const bExact = bName === query
-
                 if (aExact) return -1
                 if (bExact) return 1
-
-                // ✅ startsWith boost (huge UX improvement)
                 const aStarts = aName.startsWith(query)
                 const bStarts = bName.startsWith(query)
-
                 if (aStarts && !bStarts) return -1
                 if (bStarts && !aStarts) return 1
-
-                // ✅ safe score compare
                 return (a.score ?? 1) - (b.score ?? 1)
             })
             .slice(0, 15)
             .map(res => res.item)
     }, [searchQuery, fuse])
 
-    // 5. Language toggle
-    const toggleLang = () => {
-        setLang(prev => (prev === 'en' ? 'ne' : 'en'))
-    }
+    const toggleLang = () => setLang(prev => (prev === 'en' ? 'ne' : 'en'))
 
-    // 6. Context value
+    // 5. Context value (Now includes tableNo)
     const contextValue = useMemo(() => ({
         newJson,
         allCategories,
@@ -111,8 +102,10 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
         searchQuery,
         setSearchQuery,
         lang,
-        toggleLang
-    }), [searchQuery, filteredItems, lang, allCategories])
+        toggleLang,
+        tableNo,    // The current table number from URL
+        setTableNo  // Function to change it
+    }), [searchQuery, filteredItems, lang, allCategories, tableNo])
 
     return (
         <MenuContext.Provider value={contextValue}>

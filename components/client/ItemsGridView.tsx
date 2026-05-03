@@ -30,11 +30,10 @@ const ItemsGridView = ({ selectedCategory }: { selectedCategory: Category }) => 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             
-            <div className="mb-6 px-1">
+            <div className="sticky top-[130px] z-[50] mb-6 px-1 pointer-events-none">
                 <Link
                     href="/"
-                    /* CHANGED: border-white/5 to border-border */
-                    className="group inline-flex items-center gap-3 bg-card border border-border py-2.5 px-5 rounded-2xl shadow-lg transition-all active:scale-95 hover:border-primary/50"
+                    className="group inline-flex items-center gap-3 bg-card/90 backdrop-blur-md border border-border py-2.5 px-5 rounded-2xl shadow-glow transition-all active:scale-95 hover:border-primary/50 pointer-events-auto"
                 >
                     <ChevronLeft size={16} className="text-primary transition-transform group-hover:-translate-x-1" />
                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text">
