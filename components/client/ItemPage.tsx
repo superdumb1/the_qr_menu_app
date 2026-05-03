@@ -99,7 +99,7 @@ const ItemPage = ({ itemId }: ItemPageProps) => {
 
 
                 <div className="space-y-4">
-                    <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/80">Ingredients</h3>
+                    {/* <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/80">Ingredients</h3> */}
                     <p className="text-text/70 leading-relaxed font-medium">
                         {item.description !== "-" ? item.description : "A signature resort special, crafted with fresh seasonal ingredients and traditional spices."}
                     </p>
