@@ -2,9 +2,11 @@
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import { useSearchParams } from 'next/navigation'; // Import this
 
 const CategoryGridView = ({ sortedCategories }: { sortedCategories: any }) => {
     const fallbackImage = "/images/placeholder-food.jpg";
+    const searchParams = useSearchParams(); // Get existing params (table, etc.)
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
@@ -19,6 +21,13 @@ const CategoryGridView = ({ sortedCategories }: { sortedCategories: any }) => {
 
             <div className="grid grid-cols-2 gap-3 md:gap-4">
                 {sortedCategories.map((category: any) => {
+                    // Logic to build the URL without losing the table
+                    const createCategoryLink = () => {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.set('cat', category.id.toString());
+                        return `?${params.toString()}`;
+                    };
+
                     const representativeItem = category.menuItems.find(
                         (i: any) => (i.localImagePath && i.localImagePath !== "-") || (i.imageUrl && i.imageUrl !== "-")
                     );
@@ -30,7 +39,8 @@ const CategoryGridView = ({ sortedCategories }: { sortedCategories: any }) => {
                     return (
                         <Link
                             key={category.id}
-                            href={`?cat=${category.id}`}
+                            /* FIXED: Now merges params instead of overwriting */
+                            href={createCategoryLink()}
                             className="group relative flex flex-col justify-end h-42 overflow-hidden rounded-[2.5rem] active:scale-[0.96] transition-all border border-border bg-card shadow-xl"
                         >
                             <img
@@ -40,10 +50,8 @@ const CategoryGridView = ({ sortedCategories }: { sortedCategories: any }) => {
                                 onError={(e: any) => { e.target.src = fallbackImage; }}
                             />
 
-                            {/* CHANGED: Gradient now fades to the theme's shaded/card color rather than hardcoded black */}
                             <div className="absolute inset-0 overlay-gradient" />
 
-                            {/* CHANGED: Swapped bg-black/60 for bg-glass and text-white for text-text */}
                             <div className="relative z-20 mt-auto p-3 rounded-[1.5rem] bg-glass backdrop-blur-lg border border-border shadow-2xl transition-transform group-hover:-translate-y-1">
                                 <div className="flex flex-col">
                                     <h2 className="text-[15px] font-black leading-tight uppercase text-text tracking-tight italic ">
