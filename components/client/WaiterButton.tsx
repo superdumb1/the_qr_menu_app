@@ -1,25 +1,25 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useMenu } from '@/providers/MenuDataProvider';
-import { BellRing, Loader2, Info, ReceiptText } from 'lucide-react';
+import { BellRing, Loader2, Info, ReceiptText, Plus, X } from 'lucide-react';
 
 const WaiterButton = () => {
     const { lang, tableNo } = useMenu();
-    // tracks which specific action is currently in flight
     const [isCalling, setIsCalling] = useState<'WAITER' | 'BILL' | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => setMounted(true), []);
 
-    // If tableNo is missing, we disable all functionality
     const isUnknownTable = !tableNo || tableNo === "Unknown" || tableNo === "??";
 
     const triggerAction = async (type: 'WAITER' | 'BILL') => {
         if (isCalling || isUnknownTable) return;
         setIsCalling(type);
+        // Auto-close menu on action
+        setIsOpen(false);
 
         try {
-            // hitting your dummy API proxy
             await fetch('/api/waiter/call', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,6 @@ const WaiterButton = () => {
         } catch (err) {
             console.error("API Error:", err);
         } finally {
-            // reset state after delay/response
             setIsCalling(null);
         }
     };
@@ -36,68 +35,81 @@ const WaiterButton = () => {
     if (!mounted) return null;
 
     return (
-        <div className="fixed  rounded-full bottom-8 right-6 z-[100] flex flex-col items-end gap-3 animate-in slide-in-from-right-10 duration-700">
+        <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3">
+            
+            {/* Expanded Menu Options */}
+            {isOpen && !isUnknownTable && (
+                <div className="flex flex-col gap-3 mb-2 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-300 origin-bottom">
+                    {/* Bill Option */}
+                    <button
+                        onClick={() => triggerAction('BILL')}
+                        className="flex items-center gap-3 bg-surface/90 backdrop-blur-xl border border-border p-2 pr-5 rounded-full shadow-2xl group active:scale-95 transition-all"
+                    >
+                        <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center text-success">
+                            <ReceiptText size={18} />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-text">
+                            {lang === 'en' ? 'Check Bill' : 'बिल हेर्नुहोस्'}
+                        </span>
+                    </button>
 
-            {/* Table Identification Badge */}
-            <div className="bg-black/40 backdrop-blur-md border border-white/10 text-white text-[9px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl flex items-center gap-2">
-                <div className={`h-1.5 w-1.5 rounded-full ${isUnknownTable ? 'bg-danger' : 'bg-success animate-pulse'}`} />
-                {lang === 'en' ? 'Table' : 'टेबल'} {tableNo || '??'}
-            </div>
-            {/* Secondary Action: Bill Request */}
-            {!isUnknownTable && (
-                <button
-                    onClick={() => triggerAction('BILL')}
-                    disabled={!!isCalling}
-                    className="group bg-surface/80 backdrop-blur-md border border-border px-5 py-3 rounded-2xl text-text-muted hover:text-success hover:border-success/30 transition-all shadow-lg flex items-center gap-3 active:scale-95"
-                >
-                    {isCalling === 'BILL' ? (
-                        <Loader2 size={18} className="animate-spin text-success" />
-                    ) : (
-                        <ReceiptText size={18} className="group-hover:scale-110 transition-transform" />
-                    )}
-                    <span className="text-[10px] font-black uppercase tracking-widest">
-                        {isCalling === 'BILL' ? 'Processing...' : (lang === 'en' ? 'Get Bill' : 'बिल माग्नुहोस्')}
-                    </span>
-                </button>
+                    {/* Waiter Option */}
+                    <button
+                        onClick={() => triggerAction('WAITER')}
+                        className="flex items-center gap-3 bg-surface/90 backdrop-blur-xl border border-border p-2 pr-5 rounded-full shadow-2xl group active:scale-95 transition-all"
+                    >
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <BellRing size={18} />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-text">
+                            {lang === 'en' ? 'Call Service' : 'सेवा बोलाउनुहोस्'}
+                        </span>
+                    </button>
+                </div>
             )}
 
+            {/* Main Toggle / Status FAB */}
+            <div className="relative">
+                {/* Table Badge Overlay */}
+                <div className="absolute -top-2 -left-2 z-10 bg-black text-[8px] font-black px-2 py-0.5 rounded-md border border-white/10 text-white uppercase tracking-tighter">
+                    T-{tableNo || '??'}
+                </div>
 
-
-            {/* Primary Action: Call Waiter */}
-            <button
-                onClick={() => triggerAction('WAITER')}
-                disabled={!!isCalling || isUnknownTable}
-                className={`relative group flex items-center gap-4 pl-6 pr-5 py-4 rounded-[2rem] shadow-glow transition-all active:scale-95 overflow-hidden ${isCalling || isUnknownTable
-                        ? 'bg-card border-border text-text-muted opacity-80 cursor-not-allowed'
-                        : 'bg-primary text-white border border-primary/20'
+                <button
+                    onClick={() => isUnknownTable ? null : setIsOpen(!isOpen)}
+                    className={`h-16 w-16 rounded-full flex items-center justify-center shadow-glow transition-all active:scale-90 border-2 ${
+                        isUnknownTable 
+                        ? 'bg-card border-border text-text-muted' 
+                        : isOpen ? 'bg-background border-primary text-primary rotate-0' : 'bg-primary border-primary/20 text-white'
                     }`}
-            >
-                {isCalling === 'WAITER' && (
-                    <div className="absolute inset-0 bg-white/10 animate-pulse" />
-                )}
-
-                <div className="flex flex-col items-start">
-                    <span className="font-black text-[13px] uppercase tracking-tighter leading-none">
-                        {isCalling === 'WAITER'
-                            ? (lang === 'en' ? 'Calling...' : 'बोलाउँदै...')
-                            : (lang === 'en' ? 'Call Waiter' : 'वेटर बोलाउनुहोस्')}
-                    </span>
-                    <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest mt-1">
-                        {isUnknownTable ? 'Scan QR to start' : 'Direct Assistance'}
-                    </span>
-                </div>
-
-                <div className={`h-10 w-10 rounded-2xl flex items-center justify-center transition-all ${isCalling === 'WAITER' ? 'bg-transparent' : 'bg-black/10 group-hover:bg-black/20'
-                    }`}>
-                    {isCalling === 'WAITER' ? (
-                        <Loader2 size={20} className="animate-spin text-white" />
+                >
+                    {isCalling ? (
+                        <Loader2 size={24} className="animate-spin" />
+                    ) : isOpen ? (
+                        <X size={24} />
+                    ) : isUnknownTable ? (
+                        <Info size={24} />
                     ) : (
-                        isUnknownTable ? <Info size={18} /> : <BellRing size={20} className="group-hover:rotate-12 transition-transform" />
+                        <div className="relative">
+                           <UtensilsIcon size={24} />
+                           {/* Pulse indicator for 'active session' */}
+                           <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                           </span>
+                        </div>
                     )}
-                </div>
-            </button>
+                </button>
+            </div>
         </div>
     );
 };
+
+// Simple custom icon or use UtensilsCrossed
+const UtensilsIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+    </svg>
+);
 
 export default WaiterButton;
