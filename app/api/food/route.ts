@@ -5,10 +5,11 @@ import { isDev } from '@/lib/env';
 
 export async function GET() {
     // Ensure this matches your simplified backend path
+    console.log(isDev)
     if (isDev) {
-        console.log("is dev")
         return NextResponse.json({ message: "All categories retrieved.", data: newJson, status: true, statusCode: 200 }, { status: 200 });
     }
+
     const BACKEND_URL = `${process.env.BACKEND_API_URL}/qr-menu`;
 
 
