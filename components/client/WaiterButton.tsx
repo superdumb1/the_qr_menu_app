@@ -15,26 +15,39 @@ const WaiterButton = () => {
 
     const triggerAction = async (type: 'WAITER' | 'BILL') => {
         if (isCalling || isUnknownTable) return;
+
         setIsCalling(type);
         setIsOpen(false);
+
         try {
-            await fetch('/api/waiter/call', {
+            const response = await fetch(`/api/waiter`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tableNo, type })
+                body: JSON.stringify({
+                    tableNo,
+                    type,
+                }),
             });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Request failed');
+            }
+
+            console.log("✅ Success:", data.message);
+
         } catch (err) {
-            console.error("API Error:", err);
+            console.error("❌ API Error:", err);
         } finally {
-            setIsCalling(null);
+            setTimeout(() => setIsCalling(null), 1000);
         }
     };
-
     if (!mounted) return null;
 
     return (
         <div className="fixed bottom-8 right-6 z-[100] flex flex-col items-end gap-4">
-            
+
             {/* Expanded Options */}
             {isOpen && !isUnknownTable && (
                 <div className="flex flex-col gap-4 mb-2 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500 origin-bottom">
@@ -69,10 +82,10 @@ const WaiterButton = () => {
                 {!isOpen && !isCalling && !isUnknownTable && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         {[0, 1, 2, 3].map((i) => (
-                            <div 
+                            <div
                                 key={i}
-                                className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active" 
-                                style={{ animationDelay: `${i}s` }} 
+                                className="absolute h-full w-full rounded-full border-[3px] border-primary animate-sonar-active"
+                                style={{ animationDelay: `${i}s` }}
                             />
                         ))}
                     </div>
@@ -82,10 +95,10 @@ const WaiterButton = () => {
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
                     <div className="flex flex-col items-center">
                         <div className="bg-background/40 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full shadow-2xl flex items-center gap-2">
-             
-                           <span className="text-[10px] flex gap-2 justify-between font-black text-text tracking-tighter">
-                             TABLE <span className="">{tableNo || '??'}</span>
-                           </span>
+
+                            <span className="text-[10px] flex gap-2 justify-between font-black text-text tracking-tighter">
+                                TABLE <span className="">{tableNo || '??'}</span>
+                            </span>
                         </div>
                         {/* Little connecting stem to make it look anchored */}
                         <div className="w-[2px] h-2 bg-white/20 shadow-glow" />
@@ -94,13 +107,12 @@ const WaiterButton = () => {
 
                 <button
                     onClick={() => isUnknownTable ? null : setIsOpen(!isOpen)}
-                    className={`h-16 w-16 rounded-full flex items-center justify-center shadow-orange-glow transition-all duration-500 active:scale-75 border-4 z-10 relative ${
-                        isUnknownTable 
-                        ? 'bg-card border-border text-text-muted opacity-50' 
-                        : isOpen 
-                            ? 'bg-bg border-primary text-primary rotate-180 shadow-none' 
+                    className={`h-16 w-16 rounded-full flex items-center justify-center shadow-orange-glow transition-all duration-500 active:scale-75 border-4 z-10 relative ${isUnknownTable
+                        ? 'bg-card border-border text-text-muted opacity-50'
+                        : isOpen
+                            ? 'bg-bg border-primary text-primary rotate-180 shadow-none'
                             : 'bg-primary border-white/20 text-white hover:scale-105'
-                    }`}
+                        }`}
                 >
                     {isCalling ? (
                         <Loader2 size={28} className="animate-spin" />

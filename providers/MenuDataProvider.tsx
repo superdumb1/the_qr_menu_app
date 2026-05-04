@@ -16,7 +16,7 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
 
     const [searchQuery, setSearchQuery] = useState('')
     const [lang, setLang] = useState<'en' | 'ne'>('en')
-    
+
     // API States
     const [allCategories, setAllCategories] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -30,18 +30,23 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
         params.set('table', num.toString())
         router.push(`${pathname}?${params.toString()}`, { scroll: false })
     }
-    
-    // --- Fetch Data from Dummy API ---
+
     useEffect(() => {
         const fetchMenu = async () => {
             try {
                 setIsLoading(true)
                 const response = await fetch('/api/food')
                 if (!response.ok) throw new Error('Failed to fetch menu')
-                const data = await response.json()
-                setAllCategories(data)
+
+                const result = await response.json()
+                console.log(result)
+                // Extract the 'data' array from the response object
+                // If result.data is missing, default to an empty array
+                setAllCategories(Array.isArray(result.data) ? result.data : [])
+
             } catch (err: any) {
                 setError(err.message)
+                setAllCategories([]) // Fallback to empty array on error
             } finally {
                 setIsLoading(false)
             }
@@ -119,7 +124,7 @@ const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children })
         lang,
         tableNo,
         setTableNo,
-        isLoading, 
+        isLoading,
         error
     }), [searchQuery, filteredItems, lang, allCategories, tableNo, isLoading, error])
 

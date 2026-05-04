@@ -1,17 +1,55 @@
+import { isDev } from '@/lib/env';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-    const body = await request.json();
-    const { tableNo, type } = body; 
+export async function POST(req: Request) {
 
-    console.log(`[SERVER]: Table ${tableNo} is requesting: ${type}`);
+    try {
+        const body = await req.json();
+        const { tableNo, type } = body;
 
-    // Simulate calling the external restaurant system
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+        if (!tableNo || !type) {
+            return NextResponse.json(
+                { success: false, message: "Missing tableNo or type" },
+                { status: 400 }
+            );
+        }
+        if (isDev) {
+            console.log(`🧪 DEV MODE - Mock waiter request ${type}   ${tableNo}`);
 
-    return NextResponse.json({ 
-        success: true, 
-        message: `Request for ${type} sent for Table ${tableNo}`,
-        timestamp: new Date().toISOString()
-    }, { status: 200 });
+            return NextResponse.json({
+                success: true,
+                message: `${type} request acknowledged for Table ${tableNo}`,
+                tableNo,
+                type,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        // ✅ map type → Express endpoint
+        const endpoint =
+            type === 'BILL' ? 'call-for-bill' : 'call-for-order';
+
+        const BACKEND_URL = `${process.env.BACKEND_API_URL}/qr-menu/${endpoint}`;
+
+        const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tableNo }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Backend error');
+        }
+
+        return NextResponse.json(data);
+
+    } catch (error) {
+        console.error("Waiter API error:", error);
+        return NextResponse.json(
+            { success: false, message: "Failed to process request" },
+            { status: 500 }
+        );
+    }
 }
