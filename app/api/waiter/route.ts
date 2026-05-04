@@ -24,26 +24,29 @@ export async function POST(req: Request) {
                 timestamp: new Date().toISOString()
             });
         }
+        else {
 
-        // ✅ map type → Express endpoint
-        const endpoint =
-            type === 'BILL' ? 'call-for-bill' : 'call-for-order';
 
-        const BACKEND_URL = `${process.env.BACKEND_API_URL}/qr-menu/${endpoint}`;
+            // ✅ map type → Express endpoint
+            const endpoint =
+                type === 'BILL' ? 'call-for-bill' : 'call-for-order';
 
-        const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tableNo }),
-        });
+            const BACKEND_URL = `${process.env.BACKEND_API_URL}/qr-menu/${endpoint}`;
 
-        const data = await response.json();
+            const response = await fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tableNo }),
+            });
 
-        if (!response.ok) {
-            throw new Error(data.message || 'Backend error');
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Backend error');
+            }
+
+            return NextResponse.json(data);
         }
-
-        return NextResponse.json(data);
 
     } catch (error) {
         console.error("Waiter API error:", error);
