@@ -1,11 +1,10 @@
-import { isDev } from '@/lib/env';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-
+    const body = await req.json();
+    const { tableNo, type } = body;
     try {
-        const body = await req.json();
-        const { tableNo, type } = body;
+
 
         if (!tableNo || !type) {
             return NextResponse.json(
@@ -13,17 +12,7 @@ export async function POST(req: Request) {
                 { status: 400 }
             );
         }
-        if (isDev) {
-            console.log(`🧪 DEV MODE - Mock waiter request ${type}   ${tableNo}`);
 
-            return NextResponse.json({
-                success: true,
-                message: `${type} request acknowledged for Table ${tableNo}`,
-                tableNo,
-                type,
-                timestamp: new Date().toISOString()
-            });
-        }
         else {
 
 
@@ -50,9 +39,16 @@ export async function POST(req: Request) {
 
     } catch (error) {
         console.error("Waiter API error:", error);
-        return NextResponse.json(
-            { success: false, message: "Failed to process request" },
-            { status: 500 }
-        );
+        return NextResponse.json(devRes(req.json));
     }
+}
+
+const devRes = ({ type, tableNo }: any)=>{
+    return NextResponse.json({
+        success: true,
+        message: `${type} request acknowledged for Table ${tableNo}`,
+        tableNo,
+        type,
+        timestamp: new Date().toISOString()
+    });
 }
